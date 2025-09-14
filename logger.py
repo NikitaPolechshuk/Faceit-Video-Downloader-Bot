@@ -1,7 +1,5 @@
 import logging
-
-
-LOG_FILE = "bot_debug.log"
+from constants import LOG_FILE
 
 
 def get_logger(name):
