@@ -1,7 +1,6 @@
 import os
 import tempfile
 import time
-from io import BytesIO
 
 import requests
 import telebot
