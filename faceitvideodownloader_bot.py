@@ -42,6 +42,7 @@ def setup_bot():
 
         # Проверяем доступность API
         if not check_api_availability():
+            logger.critical("Нет подключения к API серверу")
             raise ConnectionError("API сервер недоступен")
         else:
             logger.info("- Используется собственный API сервер -")
@@ -60,7 +61,7 @@ def check_api_availability():
 
 # Инициализация бота, перед этим заснем на 10 секунд
 # в ожидании загрузки сервера API
-time.sleep(10)
+time.sleep(5)
 bot = setup_bot()
 
 
@@ -134,9 +135,6 @@ def get_mp4_url_from_allstar(video_id):
         # Открываем страницу
         driver.get(allstar_url)
 
-        # Ждем загрузки страницы
-        time.sleep(5)
-
         # Ждем появления видео элементов
         wait = WebDriverWait(driver, 10)
         video_elements = wait.until(
@@ -155,13 +153,32 @@ def get_mp4_url_from_allstar(video_id):
         logger.error(f"Ошибка при получении MP4 ссылки: {str(e)}",
                      exc_info=True)
         return None
-    finally:
-        # Всегда закрываем драйвер после использования
-        if driver:
-            try:
-                driver.quit()
-            except Exception as e:
-                logger.warning(f"Ошибка при закрытии драйвера: {e}")
+
+
+def get_title_from_faceit(url):
+    driver = get_driver()
+    if driver is None:
+        logger.error("Chrome driver не доступен")
+        return None
+
+    try:
+        # Открываем страницу
+        logger.info(f"Открываем страницу: {url}")
+        driver.get(url)
+
+        # Ждем только загрузки title (быстро)
+        WebDriverWait(driver, 10).until(
+            lambda d: d.execute_script("return document.readyState") == "complete" or d.title
+        )
+
+        # Извлекаем заголовок
+        title = driver.title
+        logger.info(f"Заголовок получен: {title}")
+        return title
+    except Exception as e:
+        logger.error(f"Ошибка при открытие ссылки: {str(e)}",
+                     exc_info=True)
+        return None
 
 
 def safe_delete_file(filename):
@@ -179,7 +196,7 @@ def safe_delete_file(filename):
     return False
 
 
-def stream_video_properly(message, mp4_url, video_id):
+def stream_video_properly(message, mp4_url, faceit_url, title):
     """
     Настоящая потоковая передача с минимальным использованием RAM
     """
@@ -214,7 +231,7 @@ def stream_video_properly(message, mp4_url, video_id):
                 bot.send_video(
                     message.chat.id,
                     video_file,
-                    caption=f"🎮 * Видео с Faceit: * \n {mp4_url}",
+                    caption=f"🎥 * {title} * 🎮\n {faceit_url}",
                     timeout=120,
                     parse_mode='Markdown'
                 )
@@ -260,6 +277,7 @@ def handle_text(message):
             constants.START_PROCESS,
             parse_mode='Markdown'
         )
+        title = get_title_from_faceit(url)
         video_id = get_video_id(url)
         logger.info(f"Начало обработки видео с id {video_id} "
                     f"от пользователя {message.chat.username}")
@@ -281,7 +299,7 @@ def handle_text(message):
         )
 
         # Отправка видео
-        success = stream_video_properly(message, mp4_url, video_id)
+        success = stream_video_properly(message, mp4_url, url, title)
 
         if success:
             # Удаляем сообщение о обработке
