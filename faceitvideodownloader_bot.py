@@ -43,6 +43,8 @@ def setup_bot():
         # Проверяем доступность API
         if not check_api_availability():
             raise ConnectionError("API сервер недоступен")
+        else:
+            logger.info("- Используется собственный API сервер -")
 
     return telebot.TeleBot(BOT_TOKEN)
 
