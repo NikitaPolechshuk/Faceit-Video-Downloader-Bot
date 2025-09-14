@@ -29,12 +29,37 @@ if not API_URL:
     logger.critical(constants.API_SERVER_ERROR)
     raise ValueError(constants.API_SERVER_ERROR)
 
-# Инициализация бота
-bot = telebot.TeleBot(BOT_TOKEN)
-bot.api_server = API_URL
-
 # Глобальная переменная для драйвера
 driver = None
+
+
+def setup_bot():
+    """Настраивает и возвращает бота"""
+
+    if API_URL:
+        telebot.apihelper.API_URL = f"{API_URL}/bot{{0}}/{{1}}"
+        telebot.apihelper.FILE_URL = f"{API_URL}/file/bot{{0}}/{{1}}"
+
+        # Проверяем доступность API
+        if not check_api_availability():
+            raise ConnectionError("API сервер недоступен")
+
+    return telebot.TeleBot(BOT_TOKEN)
+
+
+def check_api_availability():
+    """Проверяет доступность API сервера"""
+    try:
+        response = requests.get(f"{API_URL}/bot{BOT_TOKEN}/getMe", timeout=5)
+        return response.status_code == 200
+    except Exception:
+        return False
+
+
+# Инициализация бота, перед этим заснем на 10 секунд
+# в ожидании загрузки сервера API
+time.sleep(10)
+bot = setup_bot()
 
 
 def init_driver():
