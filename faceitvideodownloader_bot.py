@@ -81,6 +81,23 @@ def init_driver():
         chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
         chrome_options.add_experimental_option('useAutomationExtension', False)
 
+        # Автоматически определяем какой браузер использовать
+        browser_paths = [
+            "/usr/bin/google-chrome-stable",
+            "/usr/bin/google-chrome", 
+            "/usr/bin/chromium-browser",
+            "/usr/bin/chromium"
+        ]
+
+        for path in browser_paths:
+            if os.path.exists(path):
+                chrome_options.binary_location = path
+                logger.info(f"Используется браузер: {path}")
+                break
+        else:
+            logger.error("Не найден ни один браузер!")
+            return None
+
         driver = webdriver.Chrome(options=chrome_options)
         driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
