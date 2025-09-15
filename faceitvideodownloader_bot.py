@@ -248,9 +248,9 @@ def stream_video_properly(message, mp4_url, faceit_url, title):
                 bot.send_video(
                     message.chat.id,
                     video_file,
-                    caption=f"🎥 <b>{title}</b> 🎮\n <code>{faceit_url}</code>",
+                    caption=f"🎥 *{title}* 🎮\n `{faceit_url}`",
                     timeout=120,
-                    parse_mode='HTML',
+                    parse_mode='Markdown',
                     supports_streaming=True
                 )
             logger.info(f"Видео {mp4_url} отправлено")
