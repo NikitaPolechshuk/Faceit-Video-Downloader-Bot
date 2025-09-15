@@ -84,7 +84,7 @@ def init_driver():
         # Автоматически определяем какой браузер использовать
         browser_paths = [
             "/usr/bin/google-chrome-stable",
-            "/usr/bin/google-chrome", 
+            "/usr/bin/google-chrome",
             "/usr/bin/chromium-browser",
             "/usr/bin/chromium"
         ]
