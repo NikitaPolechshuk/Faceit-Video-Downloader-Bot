@@ -1,6 +1,6 @@
 LOG_FILE = "bot_debug.log"
 
-TOKEN_ENV_ERROR = "Не найден BOT_TOKEN в переменных окружения!"
+TOKEN_ENV_ERROR = "Не найден TELEGRAM_BOT_TOKEN в переменных окружения!"
 API_SERVER_ERROR = "Не найден API_SERVER в переменных окружения!"
 
 WELCOME_TEXT = """
