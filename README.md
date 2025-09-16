@@ -1,3 +1,9 @@
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white&style=flat)
+![Telegram API](https://img.shields.io/badge/Telegram_Bot_API-26A5E4?logo=telegram&logoColor=white&style=flat)
+![Pillow](https://img.shields.io/badge/Pillow-8F2D4D?logo=pillow&logoColor=white&style=flat)
+![Selenium](https://img.shields.io/badge/Selenium-Python-green?logo=selenium&logoColor=white&style=flat)
+
+
 # Faceit-Video-Downloader-Bot
 
 Бот для скачивания видео повторов с Faceit.сom
